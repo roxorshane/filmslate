@@ -4,9 +4,26 @@ import type { UserData } from '../App';
 
 interface SignupBasicInfoProps {
   onSubmit: (data: Partial<UserData>) => void;
+  context?: 'signup' | 'play' | 'genres';
 }
 
-export function SignupBasicInfo({ onSubmit }: SignupBasicInfoProps) {
+const CONTEXT_COPY = {
+  signup: {
+    heading: 'Create your account',
+    sub: 'Join millions of movie lovers worldwide',
+  },
+  play: {
+    heading: 'Sign in to watch',
+    sub: 'Create an account or sign in to start your free trial',
+  },
+  genres: {
+    heading: 'Sign in to personalise',
+    sub: 'Create an account or sign in to save your preferences',
+  },
+};
+
+export function SignupBasicInfo({ onSubmit, context = 'signup' }: SignupBasicInfoProps) {
+  const copy = CONTEXT_COPY[context];
   const [formData, setFormData] = useState({
     name: '',
     dateOfBirth: '',
@@ -48,8 +65,8 @@ export function SignupBasicInfo({ onSubmit }: SignupBasicInfoProps) {
               <Film className="w-10 h-10 text-black" />
               <h1 className="text-3xl text-black tracking-tight">FilmSlate</h1>
             </div>
-            <h2 className="text-black text-3xl">Create your account</h2>
-            <p className="text-black-400">Join millions of movie lovers worldwide</p>
+            <h2 className="text-black text-3xl">{copy.heading}</h2>
+            <p className="text-black-400">{copy.sub}</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
