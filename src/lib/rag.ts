@@ -1,12 +1,13 @@
 import type { FilmData } from '../data/films';
 
+/** A recommended film paired with a human-readable rationale and similarity score. */
 export interface Recommendation {
   film: FilmData;
   reason: string;
   score: number;
 }
 
-// Common English stop words to exclude from TF-IDF
+// Common English stop words excluded from TF-IDF to reduce noise.
 const STOP_WORDS = new Set([
   'a','an','the','and','or','but','in','on','at','to','for','of','with',
   'by','from','is','are','was','were','be','been','being','have','has','had',
@@ -22,84 +23,150 @@ const STOP_WORDS = new Set([
   'without','within','along','across','behind','beyond','up','down','new',
 ]);
 
-function tokenize(text: string): string[] {
-  return text
+/**
+ * Splits raw text into a list of meaningful lowercase tokens.
+ *
+ * Strips punctuation, removes leading/trailing hyphens and apostrophes,
+ * drops tokens shorter than 3 characters, and filters out stop words.
+ */
+function tokenize(rawText: string): string[] {
+  return rawText
     .toLowerCase()
     .replace(/[^a-z0-9\s'-]/g, ' ')
     .split(/\s+/)
-    .map(t => t.replace(/^[-']+|[-']+$/g, ''))
-    .filter(t => t.length > 2 && !STOP_WORDS.has(t));
+    .map(token => token.replace(/^[-']+|[-']+$/g, ''))
+    .filter(token => token.length > 2 && !STOP_WORDS.has(token));
 }
 
-function termFrequency(tokens: string[]): Map<string, number> {
-  const tf = new Map<string, number>();
+/**
+ * Computes normalised term-frequency for a list of tokens.
+ *
+ * Each term's count is divided by the total number of tokens so that
+ * longer documents do not dominate shorter ones.
+ *
+ * @returns A map from term → normalised frequency (0–1).
+ */
+function computeTermFrequency(tokens: string[]): Map<string, number> {
+  const frequencyMap = new Map<string, number>();
   for (const token of tokens) {
-    tf.set(token, (tf.get(token) ?? 0) + 1);
+    frequencyMap.set(token, (frequencyMap.get(token) ?? 0) + 1);
   }
-  // Normalize by document length
-  for (const [term, count] of tf) {
-    tf.set(term, count / tokens.length);
+  for (const [term, count] of frequencyMap) {
+    frequencyMap.set(term, count / tokens.length);
   }
-  return tf;
+  return frequencyMap;
 }
 
-function buildIDF(documents: string[][]): Map<string, number> {
-  const N = documents.length;
-  const df = new Map<string, number>();
-  for (const doc of documents) {
-    const unique = new Set(doc);
-    for (const term of unique) {
-      df.set(term, (df.get(term) ?? 0) + 1);
+/**
+ * Builds an Inverse Document Frequency map across all documents.
+ *
+ * Uses smoothed IDF: `ln((N + 1) / (docCount + 1)) + 1` to avoid
+ * division by zero and to dampen extremely rare terms.
+ *
+ * @param tokenizedDocuments - Each element is the token list for one document.
+ * @returns A map from term → IDF weight.
+ */
+function buildInverseDocumentFrequency(tokenizedDocuments: string[][]): Map<string, number> {
+  const totalDocuments = tokenizedDocuments.length;
+  const documentFrequency = new Map<string, number>();
+
+  for (const tokens of tokenizedDocuments) {
+    const uniqueTerms = new Set(tokens);
+    for (const term of uniqueTerms) {
+      documentFrequency.set(term, (documentFrequency.get(term) ?? 0) + 1);
     }
   }
-  const idf = new Map<string, number>();
-  for (const [term, count] of df) {
-    idf.set(term, Math.log((N + 1) / (count + 1)) + 1); // smoothed IDF
+
+  const idfWeights = new Map<string, number>();
+  for (const [term, docCount] of documentFrequency) {
+    idfWeights.set(term, Math.log((totalDocuments + 1) / (docCount + 1)) + 1);
   }
-  return idf;
+  return idfWeights;
 }
 
-function tfidfVector(tf: Map<string, number>, idf: Map<string, number>, vocab: string[]): number[] {
-  return vocab.map(term => (tf.get(term) ?? 0) * (idf.get(term) ?? 0));
+/**
+ * Projects a document's term-frequency map into a fixed-length TF-IDF vector.
+ *
+ * Each dimension corresponds to a term in the shared vocabulary.
+ * The value is `TF(term) × IDF(term)`, or 0 if the term is absent.
+ *
+ * @param termFrequency - The document's normalised term-frequency map.
+ * @param idfWeights    - The corpus-wide IDF weights.
+ * @param vocabulary    - The ordered list of all terms (defines vector dimensions).
+ */
+function buildTfidfVector(
+  termFrequency: Map<string, number>,
+  idfWeights: Map<string, number>,
+  vocabulary: string[],
+): number[] {
+  return vocabulary.map(term =>
+    (termFrequency.get(term) ?? 0) * (idfWeights.get(term) ?? 0)
+  );
 }
 
-function cosineSimilarity(a: number[], b: number[]): number {
-  let dot = 0, normA = 0, normB = 0;
-  for (let i = 0; i < a.length; i++) {
-    dot += a[i] * b[i];
-    normA += a[i] * a[i];
-    normB += b[i] * b[i];
+/**
+ * Computes the cosine similarity between two equal-length vectors.
+ *
+ * Returns a value between 0 (orthogonal / no similarity) and 1 (identical direction).
+ * Returns 0 if either vector has zero magnitude.
+ */
+function computeCosineSimilarity(vectorA: number[], vectorB: number[]): number {
+  let dotProduct = 0;
+  let magnitudeA = 0;
+  let magnitudeB = 0;
+
+  for (let i = 0; i < vectorA.length; i++) {
+    dotProduct += vectorA[i] * vectorB[i];
+    magnitudeA += vectorA[i] * vectorA[i];
+    magnitudeB += vectorB[i] * vectorB[i];
   }
-  if (normA === 0 || normB === 0) return 0;
-  return dot / (Math.sqrt(normA) * Math.sqrt(normB));
+
+  if (magnitudeA === 0 || magnitudeB === 0) return 0;
+  return dotProduct / (Math.sqrt(magnitudeA) * Math.sqrt(magnitudeB));
 }
 
-function buildDocument(film: FilmData): string {
-  return [
-    film.critique,
-    film.synopsis,
-    film.genres.join(' '),
-    film.description,
-  ].join(' ');
+/**
+ * Concatenates a film's textual fields into a single searchable document.
+ *
+ * Combines the editorial critique, synopsis, genre labels, and short
+ * description so that TF-IDF can capture both thematic and genre signals.
+ */
+function buildSearchableDocument(film: FilmData): string {
+  return [film.critique, film.synopsis, film.genres.join(' '), film.description].join(' ');
 }
 
-/** Extract the most semantically distinctive shared terms between two token sets */
-function sharedThemes(
+/**
+ * Finds the most semantically distinctive terms shared between two token sets.
+ *
+ * Shared terms are ranked by their IDF weight — rarer terms score higher
+ * because they are more thematically distinctive.
+ *
+ * @param queryTokens     - Tokens from the query (unavailable) film.
+ * @param candidateTokens - Tokens from a candidate (available) film.
+ * @param idfWeights      - Corpus-wide IDF weights used for ranking.
+ * @param maxTerms        - Maximum number of shared terms to return.
+ */
+function findSharedThemes(
   queryTokens: string[],
   candidateTokens: string[],
-  idf: Map<string, number>,
-  topN = 3,
+  idfWeights: Map<string, number>,
+  maxTerms = 3,
 ): string[] {
-  const querySet = new Set(queryTokens);
-  const candidateSet = new Set(candidateTokens);
-  const shared = [...querySet].filter(t => candidateSet.has(t));
-  // Weight shared terms by IDF (rarer terms = more distinctive)
-  return shared
-    .sort((a, b) => (idf.get(b) ?? 0) - (idf.get(a) ?? 0))
-    .slice(0, topN);
+  const queryTermSet = new Set(queryTokens);
+  const candidateTermSet = new Set(candidateTokens);
+  const sharedTerms = [...queryTermSet].filter(term => candidateTermSet.has(term));
+
+  return sharedTerms
+    .sort((a, b) => (idfWeights.get(b) ?? 0) - (idfWeights.get(a) ?? 0))
+    .slice(0, maxTerms);
 }
 
-// Map raw thematic tokens to readable theme phrases
+/**
+ * Maps raw thematic tokens to human-readable phrases.
+ *
+ * For example, the token "noir" becomes "noir atmosphere" and "institution"
+ * becomes "institutions". Used when generating recommendation reason text.
+ */
 const THEME_PHRASES: Record<string, string> = {
   identity: 'identity', memory: 'memory', grief: 'grief', loss: 'loss',
   silence: 'silence', isolation: 'isolation', darkness: 'darkness',
@@ -121,16 +188,28 @@ const THEME_PHRASES: Record<string, string> = {
   community: 'community', belonging: 'belonging',
 };
 
-function generateReason(
+/**
+ * Generates a human-readable explanation for why a candidate film was
+ * recommended based on the unavailable query film.
+ *
+ * Tries three strategies in order:
+ *   1. If two or more shared thematic phrases exist, cites them both.
+ *   2. If exactly one shared theme exists, names it.
+ *   3. Falls back to shared genre labels, or a generic rationale.
+ *
+ * @param queryFilm   - The unavailable film the user wanted to watch.
+ * @param candidate   - The available film being recommended.
+ * @param sharedTerms - The highest-IDF terms shared between both films.
+ */
+function generateReasonText(
   queryFilm: FilmData,
   candidate: FilmData,
   sharedTerms: string[],
 ): string {
-  // Map terms to readable phrases, deduplicate
   const phrases = [
     ...new Set(
       sharedTerms
-        .map(t => THEME_PHRASES[t])
+        .map(term => THEME_PHRASES[term])
         .filter(Boolean)
     )
   ];
@@ -142,9 +221,8 @@ function generateReason(
     return `Shares ${queryFilm.title}'s preoccupation with ${phrases[0]}, brought to life through bold and distinctive filmmaking.`;
   }
 
-  // Fallback: genre-based reason
-  const sharedGenres = queryFilm.genres.filter(g =>
-    candidate.genres.some(cg => cg.toLowerCase() === g.toLowerCase())
+  const sharedGenres = queryFilm.genres.filter(genre =>
+    candidate.genres.some(candidateGenre => candidateGenre.toLowerCase() === genre.toLowerCase())
   );
   if (sharedGenres.length > 0) {
     return `A compelling ${sharedGenres[0].toLowerCase()} film with the same emotional intensity and artistic rigour as ${queryFilm.title}.`;
@@ -154,38 +232,50 @@ function generateReason(
 }
 
 /**
- * Find the top N available films most similar to the query film,
- * using TF-IDF cosine similarity over critique + synopsis + genre text.
+ * Finds the top-N available films most similar to an unavailable query film.
+ *
+ * Uses a TF-IDF / cosine-similarity pipeline:
+ *   1. Builds a searchable document for each film (critique + synopsis + genres + description).
+ *   2. Tokenizes every document and computes corpus-wide IDF weights.
+ *   3. Converts each document to a TF-IDF vector in the shared vocabulary space.
+ *   4. Ranks candidates by cosine similarity to the query film's vector.
+ *   5. Generates a human-readable reason for each recommendation using shared themes.
+ *
+ * @param queryFilm      - The film the user wanted but is no longer available.
+ * @param availableFilms - The current catalogue of streamable films.
+ * @param topN           - How many recommendations to return (default 3).
+ * @returns An array of recommendations sorted by descending similarity score.
  */
 export function getRecommendations(
   queryFilm: FilmData,
   availableFilms: FilmData[],
   topN = 3,
 ): Recommendation[] {
-  const candidates = availableFilms.filter(f => f.id !== queryFilm.id);
+  const candidates = availableFilms.filter(film => film.id !== queryFilm.id);
   if (candidates.length === 0) return [];
 
+  // Combine query + candidates into one corpus for IDF calculation.
   const allFilms = [queryFilm, ...candidates];
-  const tokenizedDocs = allFilms.map(f => tokenize(buildDocument(f)));
-  const idf = buildIDF(tokenizedDocs);
+  const tokenizedDocuments = allFilms.map(film => tokenize(buildSearchableDocument(film)));
+  const idfWeights = buildInverseDocumentFrequency(tokenizedDocuments);
 
-  // Build shared vocabulary
-  const vocab = [...idf.keys()];
+  // The ordered vocabulary defines each dimension of the TF-IDF vectors.
+  const vocabulary = [...idfWeights.keys()];
 
-  const queryTf = termFrequency(tokenizedDocs[0]);
-  const queryVec = tfidfVector(queryTf, idf, vocab);
-  const queryTokenSet = tokenizedDocs[0];
+  const queryTermFrequency = computeTermFrequency(tokenizedDocuments[0]);
+  const queryVector = buildTfidfVector(queryTermFrequency, idfWeights, vocabulary);
+  const queryTokens = tokenizedDocuments[0];
 
-  const scored = candidates.map((film, i) => {
-    const tf = termFrequency(tokenizedDocs[i + 1]);
-    const vec = tfidfVector(tf, idf, vocab);
-    const score = cosineSimilarity(queryVec, vec);
-    const shared = sharedThemes(queryTokenSet, tokenizedDocs[i + 1], idf);
-    const reason = generateReason(queryFilm, film, shared);
-    return { film, reason, score };
+  const scoredCandidates = candidates.map((film, candidateIndex) => {
+    const candidateTermFrequency = computeTermFrequency(tokenizedDocuments[candidateIndex + 1]);
+    const candidateVector = buildTfidfVector(candidateTermFrequency, idfWeights, vocabulary);
+    const similarityScore = computeCosineSimilarity(queryVector, candidateVector);
+    const sharedTerms = findSharedThemes(queryTokens, tokenizedDocuments[candidateIndex + 1], idfWeights);
+    const reason = generateReasonText(queryFilm, film, sharedTerms);
+    return { film, reason, score: similarityScore };
   });
 
-  return scored
+  return scoredCandidates
     .sort((a, b) => b.score - a.score)
     .slice(0, topN);
 }
