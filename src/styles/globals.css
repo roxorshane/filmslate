@@ -79,6 +79,9 @@
 }
 
 @theme inline {
+  --font-family-serif: Georgia, serif;
+  --spacing-thumbnail-w: 140px;
+  --spacing-thumbnail-h: 90px;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
