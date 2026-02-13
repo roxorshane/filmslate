@@ -1,0 +1,52 @@
+@reference "tailwindcss";
+.main {
+  @apply min-h-screen flex items-center justify-center relative overflow-hidden;
+}
+
+.backgroundContainer {
+  @apply absolute inset-0;
+}
+
+.backgroundImage {
+  @apply w-full h-full object-cover;
+}
+
+.backgroundOverlay {
+  @apply absolute inset-0 bg-black/50;
+}
+
+.loginButton {
+  @apply absolute z-15 top-4 right-4 px-8 py-4 text-white hover:bg-white hover:text-black transition-all duration-200 text-lg cursor-pointer;
+}
+
+.content {
+  @apply relative z-10 max-w-4xl mx-auto px-8 text-center;
+}
+
+.logoContainer {
+  @apply flex items-center justify-center gap-3 mb-12;
+}
+
+.logoIcon {
+  @apply w-12 h-12 text-white;
+}
+
+.logoTitle {
+  @apply text-5xl text-white tracking-tight;
+}
+
+.heading {
+  @apply text-4xl text-white mb-6 leading-tight;
+}
+
+.description {
+  @apply text-xl text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed;
+}
+
+.trialInfo {
+  @apply text-lg text-white/90 mb-12 max-w-2xl mx-auto leading-relaxed;
+}
+
+.createAccountButton {
+  @apply px-8 py-4 bg-slate-100 text-black hover:bg-white transition-all duration-200 text-lg cursor-pointer;
+}

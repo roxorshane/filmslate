@@ -1,0 +1,72 @@
+@reference "tailwindcss";
+.page {
+  @apply min-h-screen bg-white;
+}
+
+.header {
+  @apply border-b border-gray-200;
+}
+
+.headerInner {
+  @apply max-w-2xl mx-auto px-6 py-6 flex items-center justify-between;
+}
+
+.backButton {
+  @apply text-sm text-gray-600 hover:text-gray-900 transition-colors;
+}
+
+.headerCenter {
+  @apply text-center;
+}
+
+.headerTitle {
+  @apply text-xl font-bold tracking-tight text-gray-900 font-serif;
+}
+
+.headerSubtitle {
+  @apply text-xs text-gray-600 mt-0.5;
+}
+
+.headerSpacer {
+  @apply w-20;
+}
+
+.articleList {
+  @apply max-w-2xl mx-auto px-6;
+}
+
+.row {
+  @apply flex items-start gap-6 py-6 border-b border-gray-200 cursor-pointer;
+}
+
+.rowContent {
+  @apply flex-1 min-w-0;
+}
+
+.rowHeadline {
+  @apply text-xl font-bold leading-snug text-gray-900 transition-colors mb-1 font-serif;
+
+  :global(.group):hover & {
+    @apply text-gray-500;
+  }
+}
+
+.rowDescription {
+  @apply text-base text-gray-600 leading-snug mb-2;
+}
+
+.rowMeta {
+  @apply text-[11px] font-medium tracking-[0.2px] text-[#6b6b6b] uppercase;
+}
+
+.rowMetaSeparator {
+  @apply mx-[6px] inline-block;
+}
+
+.rowThumbnailWrapper {
+  @apply flex-shrink-0 overflow-hidden rounded-xs bg-gray-100 w-[140px] h-[90px];
+}
+
+.rowThumbnailImage {
+  @apply w-[140px] h-[90px] object-cover block;
+}

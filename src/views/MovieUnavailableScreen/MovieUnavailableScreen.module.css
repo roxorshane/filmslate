@@ -1,0 +1,80 @@
+@reference "tailwindcss";
+.main {
+  @apply min-h-screen bg-white py-16 px-6;
+}
+
+.container {
+  @apply max-w-5xl mx-auto space-y-4;
+}
+
+.header {
+  @apply text-center space-y-4;
+}
+
+.heading {
+  @apply text-4xl font-bold text-black;
+}
+
+.subtitle {
+  @apply text-lg text-slate-700;
+}
+
+.learnMore {
+  @apply underline text-slate-600;
+}
+
+.cardWrapper {
+  @apply flex justify-center;
+}
+
+.cardInner {
+  @apply w-[360px];
+}
+
+.recsSection {
+  @apply mt-8;
+}
+
+.recsHeading {
+  @apply text-2xl font-bold text-black pt-6;
+}
+
+.recsGrid {
+  @apply flex gap-6;
+}
+
+.recCard {
+  @apply flex-1 min-w-0 overflow-hidden;
+}
+
+.recImage {
+  @apply w-full object-cover h-[188px];
+}
+
+.recContent {
+  @apply space-y-2 flex flex-col h-full;
+}
+
+.recTitle {
+  @apply font-bold text-black;
+}
+
+.recDescription {
+  @apply text-sm text-slate-700;
+}
+
+.recReason {
+  @apply text-sm text-slate-700 grow;
+}
+
+.recActions {
+  @apply flex justify-end gap-2 pt-4;
+}
+
+.footer {
+  @apply flex justify-end;
+}
+
+.viewMoreIcon {
+  @apply w-4 h-4;
+}

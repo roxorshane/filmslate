@@ -473,17 +473,3 @@ export const ALL_FILMS: FilmData[] = [
 
 export const HERO_FILM_IDS = [2, 3, 4]; // 3 available films for the hero carousel
 export const GRID_FILM_IDS = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // 27 more = 30 total library films
-
-export function isFilmAvailable(film: FilmData, now: Date = new Date()): boolean {
-  const start = new Date(film.availability.start);
-  const end = new Date(film.availability.end);
-  return now >= start && now <= end;
-}
-
-export function getFilmById(id: number): FilmData | undefined {
-  return ALL_FILMS.find(f => f.id === id);
-}
-
-export function getAvailableFilms(now: Date = new Date()): FilmData[] {
-  return ALL_FILMS.filter(f => isFilmAvailable(f, now));
-}

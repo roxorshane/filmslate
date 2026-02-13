@@ -1,0 +1,48 @@
+@reference "tailwindcss";
+.toast {
+  @apply fixed bottom-8 right-8 z-50 bg-white shadow-xl border border-slate-200 p-6 max-w-sm;
+  animation: slideInFromBottom 300ms ease-out;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.closeButton {
+  @apply absolute top-3 right-3 text-slate-500 hover:text-black transition-colors;
+}
+
+.closeIcon {
+  @apply w-5 h-5;
+}
+
+.question {
+  @apply text-black mb-4 pr-6;
+}
+
+.buttonGroup {
+  @apply flex gap-3;
+}
+
+.feedbackButton {
+  @apply flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-black transition-all;
+}
+
+.feedbackIcon {
+  @apply w-5 h-5;
+}
+
+.thankYou {
+  @apply text-center py-2;
+}
+
+.thankYouText {
+  @apply text-black;
+}

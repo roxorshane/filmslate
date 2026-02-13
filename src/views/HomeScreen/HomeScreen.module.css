@@ -1,0 +1,184 @@
+@reference "tailwindcss";
+.wrapper {
+  @apply min-h-screen;
+}
+
+.header {
+  @apply fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200;
+}
+
+.headerInner {
+  @apply max-w-[1440px] mx-auto px-12 py-6 flex items-center justify-between;
+}
+
+.logoContainer {
+  @apply flex items-center gap-3;
+}
+
+.logoIcon {
+  @apply w-8 h-8 text-black;
+}
+
+.logoTitle {
+  @apply text-2xl text-black tracking-tight;
+}
+
+.headerRight {
+  @apply flex items-center gap-6;
+}
+
+.editorialButton {
+  @apply text-sm text-slate-700 hover:text-black transition-colors tracking-wide cursor-pointer;
+}
+
+.avatar {
+  @apply w-10 h-10 bg-slate-600 rounded-full;
+}
+
+.main {
+  @apply pt-24 max-w-[1440px] mx-auto px-12;
+}
+
+.heroSection {
+  @apply relative h-[600px] mb-16 -mx-12;
+}
+
+.heroSlide {
+  @apply absolute inset-0 transition-opacity duration-700;
+}
+
+.heroSlideHidden {
+  @apply opacity-0 pointer-events-none;
+}
+
+.heroSlideVisible {
+  @apply opacity-100;
+}
+
+.heroSlideInner {
+  @apply relative h-full;
+}
+
+.heroImage {
+  @apply w-full h-full object-cover;
+}
+
+.heroGradient {
+  @apply absolute inset-0 bg-gradient-to-t from-white via-white/30 to-transparent;
+}
+
+.heroContent {
+  @apply absolute bottom-0 left-0 right-0 px-12 pb-12;
+}
+
+.heroContentInner {
+  @apply max-w-2xl;
+}
+
+.forYouBadge {
+  @apply inline-block px-3 py-1 bg-slate-200 text-slate-700 text-sm mb-4;
+}
+
+.heroTitle {
+  @apply text-5xl text-black mb-4;
+}
+
+.watchNowButton {
+  @apply px-8 py-3 bg-black text-white hover:bg-black/90 transition-all duration-200 cursor-pointer;
+}
+
+.heroDots {
+  @apply absolute bottom-6 right-12 flex gap-2;
+}
+
+.heroDot {
+  @apply w-2 h-2 rounded-full transition-all cursor-pointer;
+}
+
+.heroDotActive {
+  @apply bg-black w-8;
+}
+
+.heroDotInactive {
+  @apply bg-slate-500;
+}
+
+.forYouSection {
+  @apply mb-16;
+}
+
+.forYouHeading {
+  @apply text-2xl text-black mb-6;
+}
+
+.forYouScroller {
+  @apply flex gap-4 overflow-x-auto pb-4;
+}
+
+.forYouCard {
+  @apply flex-shrink-0 w-[240px] cursor-pointer;
+}
+
+.cardPoster {
+  @apply relative aspect-[2/3] mb-2 overflow-hidden;
+}
+
+.cardImage {
+  @apply w-full h-full object-cover transition-transform duration-300;
+
+  :global(.group):hover & {
+    @apply scale-105;
+  }
+}
+
+.cardTitle {
+  @apply text-black transition-colors;
+
+  :global(.group):hover & {
+    @apply text-slate-600;
+  }
+}
+
+.genrePrompt {
+  @apply mb-16 p-8 bg-slate-50 text-center;
+}
+
+.genrePromptText {
+  @apply text-slate-700 mb-4;
+}
+
+.chooseGenresButton {
+  @apply px-6 py-3 bg-black text-white hover:bg-black/90 transition-all cursor-pointer;
+}
+
+.categoryNav {
+  @apply mb-8 flex gap-3 overflow-x-auto pb-2;
+}
+
+.categoryButton {
+  @apply px-6 py-2 whitespace-nowrap transition-all cursor-pointer;
+}
+
+.categoryButtonActive {
+  @apply bg-slate-600 text-white;
+}
+
+.categoryButtonInactive {
+  @apply bg-slate-100 text-black hover:bg-slate-200;
+}
+
+.filmGrid {
+  @apply grid grid-cols-5 gap-4 pb-16;
+}
+
+.filmGridCard {
+  @apply cursor-pointer;
+}
+
+.filmGridTitle {
+  @apply text-black transition-colors text-left;
+
+  :global(.group):hover & {
+    @apply text-slate-600;
+  }
+}

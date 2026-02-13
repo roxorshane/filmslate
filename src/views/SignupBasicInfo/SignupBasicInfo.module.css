@@ -1,0 +1,80 @@
+@reference "tailwindcss";
+.main {
+  @apply min-h-screen bg-black flex items-center justify-center px-8 py-12;
+}
+
+.backgroundContainer {
+  @apply absolute inset-0;
+}
+
+.backgroundImage {
+  @apply w-full h-full object-cover;
+}
+
+.backgroundOverlay {
+  @apply absolute inset-0 bg-black/50;
+}
+
+.formWrapper {
+  @apply z-10 w-full max-w-md;
+}
+
+.card {
+  @apply bg-slate-50/90 rounded-lg p-8 border border-slate-400 space-y-6;
+}
+
+.headerSection {
+  @apply text-center space-y-4 mb-8;
+}
+
+.logoContainer {
+  @apply flex items-center justify-center gap-3 mb-12;
+}
+
+.logoIcon {
+  @apply w-10 h-10 text-black;
+}
+
+.logoTitle {
+  @apply text-3xl text-black tracking-tight;
+}
+
+.heading {
+  @apply text-black text-3xl;
+}
+
+.subheading {
+  @apply text-slate-600;
+}
+
+.form {
+  @apply space-y-6;
+}
+
+.fieldLabel {
+  @apply block text-sm mb-2 text-black;
+}
+
+.textInput {
+  @apply w-full px-4 py-3 bg-white border border-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:border-transparent transition-all;
+}
+
+.checkboxRow {
+  @apply flex items-start gap-3;
+}
+
+.checkbox {
+  @apply mt-1 w-4 h-4 border-slate-300 text-black focus:ring-slate-400;
+}
+
+.termsLabel {
+  @apply text-sm text-black leading-relaxed;
+}
+
+.termsLink {
+  @apply underline;
+}
+
+.submitButton {
+  @apply w-full px-6 py-4 bg-black text-white hover:bg-black/90 disabled:bg-slate-200 disabled:text-slate-600 disabled:cursor-not-allowed transition-all duration-200 text-lg;
+}

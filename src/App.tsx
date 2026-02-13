@@ -1,39 +1,172 @@
 import { useState, useEffect } from 'react';
-import { LandingScreen } from './components/LandingScreen';
-import { SignupBasicInfo } from './components/SignupBasicInfo';
-import { SignupGenrePreferences } from './components/SignupGenrePreferences';
-import { HomeScreen } from './components/HomeScreen';
-import { MovieDetailPage } from './components/MovieDetailPage';
-import { MovieUnavailableScreen } from './components/MovieUnavailableScreen';
-import { PlaybackScreen } from './components/PlaybackScreen';
-import { PaymentDialog } from './components/PaymentDialog';
-import { FeedbackToast } from './components/FeedbackToast';
-import { ALL_FILMS, getFilmById, isFilmAvailable, getAvailableFilms } from './data/films';
-import type { FilmData } from './data/films';
-import { getRecommendations } from './lib/rag';
-import type { Recommendation } from './lib/rag';
+import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
+import {
+  LandingScreen, SignupBasicInfo, SignupGenrePreferences,
+  HomeScreen, MovieDetailPage, MovieUnavailableScreen,
+  PlaybackScreen, CritiqueListPage, ViewCritiquePage,
+} from '@/views';
+import { PaymentDialog, FeedbackToast } from '@/components';
+import { ALL_FILMS } from '@/data';
+import type { FilmData } from '@/data';
+import { getFilmById, isFilmAvailable, getAvailableFilms, getRecommendations } from '@/helpers';
+import type { Recommendation } from '@/helpers';
+import type { UserData } from '@/types';
 
-export type Screen =
-  | 'landing'
-  | 'signup-basic'
-  | 'signup-genres'
-  | 'home'
-  | 'movie-detail'
-  | 'playback';
+function FilmRoute({
+  userData,
+  tosAccepted,
+  trialActivated,
+  pendingAction,
+  showPaymentDialog,
+  showFeedbackToast,
+  feedbackGiven,
+  setUserData,
+  setTosAccepted,
+  setTrialActivated,
+  setPendingAction,
+  setShowPaymentDialog,
+  setShowFeedbackToast,
+  setFeedbackGiven,
+}: {
+  userData: UserData;
+  tosAccepted: boolean;
+  trialActivated: boolean;
+  pendingAction: 'play' | 'genres' | null;
+  showPaymentDialog: boolean;
+  showFeedbackToast: boolean;
+  feedbackGiven: 'up' | 'down' | null;
+  setUserData: React.Dispatch<React.SetStateAction<UserData>>;
+  setTosAccepted: React.Dispatch<React.SetStateAction<boolean>>;
+  setTrialActivated: React.Dispatch<React.SetStateAction<boolean>>;
+  setPendingAction: React.Dispatch<React.SetStateAction<'play' | 'genres' | null>>;
+  setShowPaymentDialog: React.Dispatch<React.SetStateAction<boolean>>;
+  setShowFeedbackToast: React.Dispatch<React.SetStateAction<boolean>>;
+  setFeedbackGiven: React.Dispatch<React.SetStateAction<'up' | 'down' | null>>;
+}) {
+  const { filmId } = useParams<{ filmId: string }>();
+  const navigate = useNavigate();
 
-export interface UserData {
-  name: string;
-  dateOfBirth: string;
-  email: string;
-  password: string;
-  genres: string[];
+  const id = parseInt(filmId ?? '', 10);
+  const film = isNaN(id) ? undefined : getFilmById(id);
+
+  if (!film) {
+    return <div>Film not found</div>;
+  }
+
+  const available = isFilmAvailable(film);
+
+  const navigateToFilm = (f: FilmData) => {
+    navigate(`/film/${f.id}`);
+  };
+
+  const handleNavigateToEditorial = (f: FilmData) => {
+    window.open(`/substack/${f.id}`, '_blank');
+  };
+
+  const handleBackToHome = () => {
+    navigate('/home');
+  };
+
+  const handlePlayMovie = () => {
+    if (!tosAccepted) {
+      setPendingAction('play');
+      navigate('/signup');
+      return;
+    }
+    if (!trialActivated) {
+      setShowPaymentDialog(true);
+      return;
+    }
+    navigate(`/film/${film.id}/play`);
+  };
+
+  const handlePaymentConfirm = () => {
+    setTrialActivated(true);
+    setShowPaymentDialog(false);
+    navigate(`/film/${film.id}/play`);
+  };
+
+  const handlePaymentCancel = () => setShowPaymentDialog(false);
+
+  if (!available) {
+    const recommendations = getRecommendations(film, getAvailableFilms());
+    return (
+      <>
+        <MovieUnavailableScreen
+          film={film}
+          recommendations={recommendations}
+          onSelectFilm={navigateToFilm}
+          onReadEditorial={handleNavigateToEditorial}
+          onViewAll={handleBackToHome}
+        />
+        {showPaymentDialog && (
+          <PaymentDialog onConfirm={handlePaymentConfirm} onCancel={handlePaymentCancel} />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <MovieDetailPage
+        film={film}
+        onBack={handleBackToHome}
+        onPlay={handlePlayMovie}
+      />
+      {showPaymentDialog && (
+        <PaymentDialog onConfirm={handlePaymentConfirm} onCancel={handlePaymentCancel} />
+      )}
+    </>
+  );
 }
 
-// Keep the legacy Movie type alias so PlaybackScreen / FeedbackToast still compile
-export type Movie = FilmData;
+function PlaybackRoute({
+  setShowFeedbackToast,
+  setFeedbackGiven,
+}: {
+  setShowFeedbackToast: React.Dispatch<React.SetStateAction<boolean>>;
+  setFeedbackGiven: React.Dispatch<React.SetStateAction<'up' | 'down' | null>>;
+}) {
+  const { filmId } = useParams<{ filmId: string }>();
+  const navigate = useNavigate();
+
+  const id = parseInt(filmId ?? '', 10);
+  const film = isNaN(id) ? undefined : getFilmById(id);
+
+  if (!film) {
+    return <div>Film not found</div>;
+  }
+
+  const handleExitPlayback = () => {
+    navigate('/home');
+    setShowFeedbackToast(true);
+    setFeedbackGiven(null);
+  };
+
+  return <PlaybackScreen movie={film} onExit={handleExitPlayback} />;
+}
+
+function SubstackDetailRoute() {
+  const { filmId } = useParams<{ filmId: string }>();
+  const navigate = useNavigate();
+
+  const id = parseInt(filmId ?? '', 10);
+  const film = isNaN(id) ? undefined : getFilmById(id);
+
+  if (!film) {
+    return <div>Film not found</div>;
+  }
+
+  return (
+    <ViewCritiquePage
+      film={film}
+      onBack={() => navigate('/substack')}
+      onWatchFilm={(f) => navigate(`/film/${f.id}`)}
+    />
+  );
+}
 
 export default function App() {
-  const [currentScreen, setCurrentScreen] = useState<Screen>('landing');
   const [userData, setUserData] = useState<UserData>({
     name: '',
     dateOfBirth: '',
@@ -41,131 +174,55 @@ export default function App() {
     password: '',
     genres: [],
   });
-  const [selectedFilm, setSelectedFilm] = useState<FilmData | null>(null);
-  const [isUnavailable, setIsUnavailable] = useState(false);
-  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
-  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
-  const [showFeedbackToast, setShowFeedbackToast] = useState(false);
-  const [feedbackGiven, setFeedbackGiven] = useState<'up' | 'down' | null>(null);
 
-  // Auth / session state (prototype: ToS acceptance = "logged in")
   const [tosAccepted, setTosAccepted] = useState(false);
   const [trialActivated, setTrialActivated] = useState(false);
   const [pendingAction, setPendingAction] = useState<'play' | 'genres' | null>(null);
+  const [showPaymentDialog, setShowPaymentDialog] = useState(false);
+  const [showFeedbackToast, setShowFeedbackToast] = useState(false);
+  const [feedbackGiven, setFeedbackGiven] = useState<'up' | 'down' | null>(null);
+  const [selectedFilm, setSelectedFilm] = useState<FilmData | null>(null);
 
-  // On mount: check for ?mid= query parameter and navigate directly to that film
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mid = params.get('mid');
-    if (!mid) return;
+  const navigate = useNavigate();
 
-    const id = parseInt(mid, 10);
-    if (isNaN(id)) return;
-
-    const film = getFilmById(id);
-    if (!film) return;
-
-    const available = isFilmAvailable(film);
-    setSelectedFilm(film);
-    setIsUnavailable(!available);
-
-    if (!available) {
-      const recs = getRecommendations(film, getAvailableFilms());
-      setRecommendations(recs);
-    }
-
-    setCurrentScreen('movie-detail');
-  }, []);
-
-  const navigateToFilm = (film: FilmData) => {
-    const available = isFilmAvailable(film);
-    setSelectedFilm(film);
-    setIsUnavailable(!available);
-
-    if (!available) {
-      const recs = getRecommendations(film, getAvailableFilms());
-      setRecommendations(recs);
-    } else {
-      setRecommendations([]);
-    }
-
-    setCurrentScreen('movie-detail');
-  };
-
-  const handleCreateAccount = () => setCurrentScreen('signup-basic');
+  const handleCreateAccount = () => navigate('/signup');
 
   const handleBasicInfoSubmit = (data: Partial<UserData>) => {
     setUserData(prev => ({ ...prev, ...data }));
     setTosAccepted(true);
     if (pendingAction === 'play') {
-      // Return to the film they were trying to watch and trigger payment
       setPendingAction(null);
-      setCurrentScreen('movie-detail');
+      navigate(-1); // Go back to the film they were trying to watch
       setShowPaymentDialog(true);
     } else {
-      // 'genres' pending or normal signup flow — proceed to genre selection
       setPendingAction(null);
-      setCurrentScreen('signup-genres');
+      navigate('/signup/genres');
     }
   };
 
   const handleChooseGenresClick = () => {
     if (!tosAccepted) {
       setPendingAction('genres');
-      setCurrentScreen('signup-basic');
+      navigate('/signup');
       return;
     }
-    setCurrentScreen('signup-genres');
+    navigate('/signup/genres');
   };
 
   const handleGenreSubmit = (genres: string[]) => {
     setUserData(prev => ({ ...prev, genres }));
-    setCurrentScreen('home');
+    navigate('/home');
   };
 
-  const handleSkipGenres = () => setCurrentScreen('home');
+  const handleSkipGenres = () => navigate('/home');
 
-  const handleBackToHome = () => {
-    setCurrentScreen('home');
-    setSelectedFilm(null);
-    setIsUnavailable(false);
-    setRecommendations([]);
+  const navigateToFilm = (film: FilmData) => {
+    setSelectedFilm(film);
+    navigate(`/film/${film.id}`);
   };
 
   const handleNavigateToCritiques = () => {
-    window.location.href = '/substack';
-  };
-
-  const handleNavigateToEditorial = (film: FilmData) => {
-    window.open(`/substack?id=${film.id}`, '_blank');
-  };
-
-  const handlePlayMovie = () => {
-    if (!tosAccepted) {
-      setPendingAction('play');
-      setCurrentScreen('signup-basic');
-      return;
-    }
-    if (!trialActivated) {
-      setShowPaymentDialog(true);
-      return;
-    }
-    // Trial already active — play immediately
-    setCurrentScreen('playback');
-  };
-
-  const handlePaymentConfirm = () => {
-    setTrialActivated(true);
-    setShowPaymentDialog(false);
-    setCurrentScreen('playback');
-  };
-
-  const handlePaymentCancel = () => setShowPaymentDialog(false);
-
-  const handleExitPlayback = () => {
-    setCurrentScreen('home');
-    setShowFeedbackToast(true);
-    setFeedbackGiven(null);
+    navigate('/substack');
   };
 
   const handleFeedback = (type: 'up' | 'down') => {
@@ -183,64 +240,78 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-white">
-      {currentScreen === 'landing' && (
-        <LandingScreen onCreateAccount={handleCreateAccount} />
-      )}
-
-      {currentScreen === 'signup-basic' && (
-        <SignupBasicInfo
-          onSubmit={handleBasicInfoSubmit}
-          context={pendingAction ?? 'signup'}
+      <Routes>
+        <Route path="/" element={<LandingScreen onCreateAccount={handleCreateAccount} />} />
+        <Route
+          path="/signup"
+          element={
+            <SignupBasicInfo
+              onSubmit={handleBasicInfoSubmit}
+              context={pendingAction ?? 'signup'}
+            />
+          }
         />
-      )}
-
-      {currentScreen === 'signup-genres' && (
-        <SignupGenrePreferences
-          onSubmit={handleGenreSubmit}
-          onSkip={handleSkipGenres}
+        <Route
+          path="/signup/genres"
+          element={
+            <SignupGenrePreferences
+              onSubmit={handleGenreSubmit}
+              onSkip={handleSkipGenres}
+            />
+          }
         />
-      )}
-
-      {currentScreen === 'home' && (
-        <HomeScreen
-          userData={userData}
-          onMovieSelect={navigateToFilm}
-          onChooseGenresClick={handleChooseGenresClick}
-          onCritiquesClick={handleNavigateToCritiques}
+        <Route
+          path="/home"
+          element={
+            <HomeScreen
+              userData={userData}
+              onMovieSelect={navigateToFilm}
+              onChooseGenresClick={handleChooseGenresClick}
+              onCritiquesClick={handleNavigateToCritiques}
+            />
+          }
         />
-      )}
-
-      {currentScreen === 'movie-detail' && selectedFilm && (
-        isUnavailable ? (
-          <MovieUnavailableScreen
-            film={selectedFilm}
-            recommendations={recommendations}
-            onSelectFilm={navigateToFilm}
-            onReadEditorial={handleNavigateToEditorial}
-            onViewAll={handleBackToHome}
-          />
-        ) : (
-          <MovieDetailPage
-            film={selectedFilm}
-            onBack={handleBackToHome}
-            onPlay={handlePlayMovie}
-          />
-        )
-      )}
-
-      {currentScreen === 'playback' && selectedFilm && (
-        <PlaybackScreen
-          movie={selectedFilm}
-          onExit={handleExitPlayback}
+        <Route
+          path="/film/:filmId"
+          element={
+            <FilmRoute
+              userData={userData}
+              tosAccepted={tosAccepted}
+              trialActivated={trialActivated}
+              pendingAction={pendingAction}
+              showPaymentDialog={showPaymentDialog}
+              showFeedbackToast={showFeedbackToast}
+              feedbackGiven={feedbackGiven}
+              setUserData={setUserData}
+              setTosAccepted={setTosAccepted}
+              setTrialActivated={setTrialActivated}
+              setPendingAction={setPendingAction}
+              setShowPaymentDialog={setShowPaymentDialog}
+              setShowFeedbackToast={setShowFeedbackToast}
+              setFeedbackGiven={setFeedbackGiven}
+            />
+          }
         />
-      )}
-
-      {showPaymentDialog && (
-        <PaymentDialog
-          onConfirm={handlePaymentConfirm}
-          onCancel={handlePaymentCancel}
+        <Route
+          path="/film/:filmId/play"
+          element={
+            <PlaybackRoute
+              setShowFeedbackToast={setShowFeedbackToast}
+              setFeedbackGiven={setFeedbackGiven}
+            />
+          }
         />
-      )}
+        <Route
+          path="/substack"
+          element={
+            <CritiqueListPage
+              onSelectCritique={(film) => navigate(`/substack/${film.id}`)}
+              onBack={() => navigate('/')}
+            />
+          }
+        />
+        <Route path="/substack/:filmId" element={<SubstackDetailRoute />} />
+      </Routes>
 
       {showFeedbackToast && selectedFilm && (
         <FeedbackToast

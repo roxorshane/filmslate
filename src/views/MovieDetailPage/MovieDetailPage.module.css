@@ -1,0 +1,80 @@
+@reference "tailwindcss";
+.main {
+  @apply min-h-screen;
+}
+
+.backButton {
+  @apply fixed top-8 left-8 z-50 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm text-black hover:bg-white transition-all cursor-pointer;
+}
+
+.backIcon {
+  @apply w-5 h-5;
+}
+
+.heroContainer {
+  @apply relative h-screen;
+}
+
+.heroImage {
+  @apply w-full h-full object-cover;
+}
+
+.heroGradient {
+  @apply absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent;
+}
+
+.heroContent {
+  @apply absolute bottom-0 left-0 right-0 px-12 pb-12;
+}
+
+.heroInner {
+  @apply max-w-4xl;
+}
+
+.title {
+  @apply text-6xl text-white bg-black inline-block mb-4 px-6 py-4;
+}
+
+.playButton {
+  @apply flex items-center gap-3 px-10 py-4 bg-black text-white hover:bg-black/90 transition-all duration-200 text-lg mb-8 cursor-pointer;
+}
+
+.playIcon {
+  @apply w-6 h-6;
+}
+
+.details {
+  @apply max-w-2xl space-y-6;
+}
+
+.metaBar {
+  @apply inline-flex w-fit items-center gap-5 mb-6 text-sm text-slate-800 bg-white/60 backdrop-blur-sm px-4 py-2 rounded;
+}
+
+.metaItem {
+  @apply flex items-center gap-1.5;
+}
+
+.metaIcon {
+  @apply w-3.5 h-3.5;
+}
+
+.aboutHeading {
+  @apply text-xl text-black mb-3;
+}
+
+.aboutText {
+  @apply text-lg text-slate-700 leading-relaxed;
+}
+
+.awardsHeading {
+  @apply text-sm text-slate-600 mb-2 flex items-center gap-1.5;
+}
+
+.awardsList {
+  @apply space-y-1;
+}
+
+.awardItem {
+  @apply text-sm text-slate-700;
+}

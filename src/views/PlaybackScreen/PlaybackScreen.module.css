@@ -1,0 +1,36 @@
+@reference "tailwindcss";
+.main {
+  @apply fixed inset-0 z-50 bg-black flex items-center justify-center;
+}
+
+.closeButton {
+  @apply absolute top-8 right-8 z-50 p-2 bg-white/10 hover:bg-white/20 text-white transition-all backdrop-blur-sm;
+}
+
+.closeIcon {
+  @apply w-6 h-6;
+}
+
+.videoContainer {
+  @apply w-full max-w-6xl aspect-video bg-black flex items-center justify-center relative;
+}
+
+.posterImage {
+  @apply w-full h-full object-cover opacity-30;
+}
+
+.overlay {
+  @apply absolute inset-0 flex flex-col items-center justify-center;
+}
+
+.textContainer {
+  @apply text-white text-center;
+}
+
+.title {
+  @apply text-4xl mb-4;
+}
+
+.nowPlaying {
+  @apply text-xl text-white/80;
+}
