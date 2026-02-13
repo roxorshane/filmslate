@@ -48,8 +48,10 @@ export function MovieUnavailableScreen({
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-black pt-6">Try these instead</h2>
-          <p>These films are similar to the one you were looking for.</p>
+          <div className="mt-8">
+            <h2 className="text-2xl font-bold text-black pt-6">Try these instead</h2>
+            <p>These films are similar to the one you were looking for.</p>
+          </div>
         </div>
 
         {/* Similar Films — 3 across */}
