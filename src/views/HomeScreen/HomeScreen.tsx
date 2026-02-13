@@ -13,12 +13,12 @@ interface HomeScreenProps {
   onCritiquesClick?: () => void;
 }
 
-type Category = 'All' | 'Trending' | 'Just Added' | 'Leaving Soon' | 'Highly Acclaimed' | 'Most Liked';
+type Category = 'All' | 'Trending' | 'Leaving Soon' | 'Highly Acclaimed' | 'Most Liked';
 
 const HERO_MOVIES = ALL_FILMS.filter(f => HERO_FILM_IDS.includes(f.id));
 const MOVIE_GRID = ALL_FILMS.filter(f => GRID_FILM_IDS.includes(f.id));
 
-const CATEGORIES: Category[] = ['All', 'Trending', 'Just Added', 'Leaving Soon', 'Highly Acclaimed', 'Most Liked'];
+const CATEGORIES: Category[] = ['All', 'Trending', 'Leaving Soon', 'Highly Acclaimed', 'Most Liked'];
 
 export function HomeScreen({ userData, onMovieSelect, onChooseGenresClick, onCritiquesClick }: HomeScreenProps) {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
