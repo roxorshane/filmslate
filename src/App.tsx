@@ -4,6 +4,7 @@ import { SignupBasicInfo } from './components/SignupBasicInfo';
 import { SignupGenrePreferences } from './components/SignupGenrePreferences';
 import { HomeScreen } from './components/HomeScreen';
 import { MovieDetailPage } from './components/MovieDetailPage';
+import { MovieUnavailableScreen } from './components/MovieUnavailableScreen';
 import { PlaybackScreen } from './components/PlaybackScreen';
 import { PaymentDialog } from './components/PaymentDialog';
 import { FeedbackToast } from './components/FeedbackToast';
@@ -135,6 +136,10 @@ export default function App() {
     window.location.href = '/substack';
   };
 
+  const handleNavigateToEditorial = (film: FilmData) => {
+    window.open(`/substack?id=${film.id}`, '_blank');
+  };
+
   const handlePlayMovie = () => {
     if (!tosAccepted) {
       setPendingAction('play');
@@ -206,15 +211,21 @@ export default function App() {
       )}
 
       {currentScreen === 'movie-detail' && selectedFilm && (
-        <MovieDetailPage
-          film={selectedFilm}
-          onBack={handleBackToHome}
-          onPlay={handlePlayMovie}
-          isUnavailable={isUnavailable}
-          recommendations={recommendations}
-          onSelectFilm={navigateToFilm}
-          onViewAll={handleBackToHome}
-        />
+        isUnavailable ? (
+          <MovieUnavailableScreen
+            film={selectedFilm}
+            recommendations={recommendations}
+            onSelectFilm={navigateToFilm}
+            onReadEditorial={handleNavigateToEditorial}
+            onViewAll={handleBackToHome}
+          />
+        ) : (
+          <MovieDetailPage
+            film={selectedFilm}
+            onBack={handleBackToHome}
+            onPlay={handlePlayMovie}
+          />
+        )
       )}
 
       {currentScreen === 'playback' && selectedFilm && (
@@ -231,7 +242,7 @@ export default function App() {
         />
       )}
 
-      {showFeedbackToast && (
+      {showFeedbackToast && selectedFilm && (
         <FeedbackToast
           movieDetails={selectedFilm}
           feedbackGiven={feedbackGiven}

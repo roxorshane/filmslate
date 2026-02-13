@@ -47,7 +47,7 @@ export const ALL_FILMS: FilmData[] = [
     releaseYear: 2023,
     awards: ['Winner – Best Cinematography, Tribeca Film Festival 2023', 'Official Selection – BFI London Film Festival 2023'],
     critique: 'Shadows of Tomorrow is a suffocating, morally intricate noir that uses rain, shadow, and silence as its primary language. Director Elise Vandermeer builds a city that feels genuinely corrupt — not in a cartoonish way, but in the way institutions rot quietly from within, leaving ordinary people to navigate the residue. Detective Mara Kessler is one of cinema\'s great compromised protagonists: a woman who came home to make things right and discovers that righteousness is a luxury the city stopped affording years ago. The cinematography renders every slicked street and half-lit doorway as a moral landscape; darkness here is not atmosphere but argument. What sets the film apart from genre peers is its patience — Vandermeer allows scenes to breathe long past the point of comfort, letting guilt and silence accumulate until they become almost physical. The investigation into institutional corruption mirrors Kessler\'s own internal excavation: every corrupt official she exposes corresponds to a self-deception she must also abandon. The film\'s climax offers no catharsis, only clarity — and the film argues persuasively that clarity is the harder gift.',
-    availability: win(-61), // ended 31 days ago — UNAVAILABLE
+    availability: win(-30), // UNAVAILABLE
   },
   {
     id: 2,
@@ -472,7 +472,7 @@ export const ALL_FILMS: FilmData[] = [
 ];
 
 export const HERO_FILM_IDS = [2, 3, 4]; // 3 available films for the hero carousel
-export const GRID_FILM_IDS = [5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // 27 more = 30 total library films
+export const GRID_FILM_IDS = [2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]; // 27 more = 30 total library films
 
 export function isFilmAvailable(film: FilmData, now: Date = new Date()): boolean {
   const start = new Date(film.availability.start);

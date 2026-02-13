@@ -1,26 +1,16 @@
 import { ArrowLeft, Play, Clock, Calendar, Award } from 'lucide-react';
 import type { FilmData } from '../data/films';
-import type { Recommendation } from '../lib/rag';
-import { UnavailableMovieDialog } from './UnavailableMovieDialog';
 
 interface MovieDetailPageProps {
   film: FilmData;
   onBack: () => void;
   onPlay: () => void;
-  isUnavailable?: boolean;
-  recommendations?: Recommendation[];
-  onSelectFilm?: (film: FilmData) => void;
-  onViewAll?: () => void;
 }
 
 export function MovieDetailPage({
   film,
   onBack,
   onPlay,
-  isUnavailable = false,
-  recommendations = [],
-  onSelectFilm,
-  onViewAll,
 }: MovieDetailPageProps) {
   return (
     <div className="min-h-screen">
@@ -94,16 +84,6 @@ export function MovieDetailPage({
         </div>
       </div>
 
-      {/* Unavailable overlay */}
-      {isUnavailable && recommendations.length > 0 && onSelectFilm && onViewAll && (
-        <UnavailableMovieDialog
-          unavailableFilm={film}
-          recommendations={recommendations}
-          onSelectFilm={onSelectFilm}
-          onViewAll={onViewAll}
-          onClose={onBack}
-        />
-      )}
     </div>
   );
 }
