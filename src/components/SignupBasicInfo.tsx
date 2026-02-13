@@ -46,12 +46,12 @@ export function SignupBasicInfo({ onSubmit, context = 'signup' }: SignupBasicInf
   const isValid = !!formData.acceptedTerms;
 
   return (
-    <div className="min-h-screen bg-black flex items-center justify-center px-8 py-12">
+    <main className="min-h-screen bg-black flex items-center justify-center px-8 py-12">
       {/* Background hero image with overlay */}
       <div className="absolute inset-0">
         <img
           src="https://images.unsplash.com/photo-1608170825938-a8ea0305d46c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb21hbmNlJTIwY291cGxlJTIwY2luZW1hfGVufDF8fHx8MTc2MzkyOTM3NXww&ixlib=rb-4.1.0&q=80&w=1080"
-          alt="Cinematic background"
+          alt=""
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/50" />
@@ -62,7 +62,7 @@ export function SignupBasicInfo({ onSubmit, context = 'signup' }: SignupBasicInf
           {/* Logo */}
           <div className="text-center space-y-4 mb-8">
             <div className="flex items-center justify-center gap-3 mb-12">
-              <Film className="w-10 h-10 text-black" />
+              <Film className="w-10 h-10 text-black" aria-hidden="true" />
               <h1 className="text-3xl text-black tracking-tight">FilmSlate</h1>
             </div>
             <h2 className="text-black text-3xl">{copy.heading}</h2>
@@ -143,13 +143,13 @@ export function SignupBasicInfo({ onSubmit, context = 'signup' }: SignupBasicInf
             <button
               type="submit"
               disabled={!isValid}
-              className="w-full px-6 py-4 bg-black text-white hover:bg-black/90 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-lg"
+              className="w-full px-6 py-4 bg-black text-white hover:bg-black/90 disabled:bg-slate-200 disabled:text-slate-600 disabled:cursor-not-allowed transition-all duration-200 text-lg"
             >
               Continue
             </button>
           </form>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -10,12 +10,13 @@ interface FeedbackToastProps {
 
 export function FeedbackToast({ movieDetails, feedbackGiven, onFeedback, onClose }: FeedbackToastProps) {
   return (
-    <div className="fixed bottom-8 right-8 z-50 bg-white shadow-xl border border-slate-200 p-6 max-w-sm animate-in slide-in-from-bottom-4 duration-300">
+    <div role="status" aria-live="polite" className="fixed bottom-8 right-8 z-50 bg-white shadow-xl border border-slate-200 p-6 max-w-sm animate-in slide-in-from-bottom-4 duration-300">
       <button
         onClick={onClose}
-        className="absolute top-3 right-3 text-slate-400 hover:text-black transition-colors"
+        aria-label="Close"
+        className="absolute top-3 right-3 text-slate-500 hover:text-black transition-colors"
       >
-        <X className="w-5 h-5" />
+        <X className="w-5 h-5" aria-hidden="true" />
       </button>
 
       {feedbackGiven === null ? (
@@ -26,14 +27,14 @@ export function FeedbackToast({ movieDetails, feedbackGiven, onFeedback, onClose
               onClick={() => onFeedback('up')}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-black transition-all"
             >
-              <ThumbsUp className="w-5 h-5" />
+              <ThumbsUp className="w-5 h-5" aria-hidden="true" />
               Yes
             </button>
             <button
               onClick={() => onFeedback('down')}
               className="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-slate-300 hover:border-slate-600 hover:bg-slate-50 text-black transition-all"
             >
-              <ThumbsDown className="w-5 h-5" />
+              <ThumbsDown className="w-5 h-5" aria-hidden="true" />
               No
             </button>
           </div>

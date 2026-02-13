@@ -8,13 +8,14 @@ interface PlaybackScreenProps {
 
 export function PlaybackScreen({ movie, onExit }: PlaybackScreenProps) {
   return (
-    <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
+    <main className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       {/* Exit button */}
       <button
         onClick={onExit}
+        aria-label="Close"
         className="absolute top-8 right-8 z-50 p-2 bg-white/10 hover:bg-white/20 text-white transition-all backdrop-blur-sm"
       >
-        <X className="w-6 h-6" />
+        <X className="w-6 h-6" aria-hidden="true" />
       </button>
 
       {/* Playback placeholder */}
@@ -27,10 +28,10 @@ export function PlaybackScreen({ movie, onExit }: PlaybackScreenProps) {
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="text-white text-center">
             <h2 className="text-4xl mb-4">{movie.title}</h2>
-            <p className="text-xl text-white/70">Now Playing</p>
+            <p className="text-xl text-white/80">Now Playing</p>
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -23,7 +23,7 @@ export function CritiqueListPage({ onSelectCritique, onBack }: CritiqueListPageP
         <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
           <button
             onClick={onBack}
-            className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
+            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
           >
             ← FilmSlate
           </button>
@@ -31,7 +31,7 @@ export function CritiqueListPage({ onSelectCritique, onBack }: CritiqueListPageP
             <h1 className="text-xl font-bold tracking-tight text-gray-900" style={{ fontFamily: 'Georgia, serif' }}>
               FilmSlate
             </h1>
-            <p className="text-xs text-gray-400 mt-0.5">Film criticism</p>
+            <p className="text-xs text-gray-600 mt-0.5">Film criticism</p>
           </div>
           <div className="w-20" />
         </div>
@@ -55,6 +55,9 @@ function Row({ article, onSelect }: { article: CritiqueArticle; onSelect: () => 
     <article
       className="flex items-start gap-6 py-6 border-b border-gray-200 cursor-pointer group"
       onClick={onSelect}
+      tabIndex={0}
+      role="link"
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(); } }}
     >
       {/* Text */}
       <div className="flex-1 min-w-0">
@@ -64,12 +67,12 @@ function Row({ article, onSelect }: { article: CritiqueArticle; onSelect: () => 
         >
           {article.headline}
         </h2>
-        <p className="text-base text-gray-500 leading-snug mb-2">
+        <p className="text-base text-gray-600 leading-snug mb-2">
           {article.film.description}
         </p>
         <p
           className="uppercase"
-          style={{ color: '#868787', fontSize: 11, fontWeight: 500, letterSpacing: '0.2px' }}
+          style={{ color: '#6b6b6b', fontSize: 11, fontWeight: 500, letterSpacing: '0.2px' }}
         >
           {shortDate(article.publishDate)}
           <span style={{ margin: '0 6px' }}>&middot;</span>

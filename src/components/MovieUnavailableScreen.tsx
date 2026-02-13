@@ -21,16 +21,16 @@ export function MovieUnavailableScreen({
   onViewAll,
 }: MovieUnavailableScreenProps) {
   return (
-    <div className="min-h-screen bg-white py-16 px-6">
+    <main className="min-h-screen bg-white py-16 px-6">
       <div className="max-w-5xl mx-auto space-y-4">
         {/* Header section */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-black">
             This film is no longer available
           </h1>
-          <p className="text-lg text-slate-600">
+          <p className="text-lg text-slate-700">
             <strong>{film.title}</strong> has left our rotating 30-day library.{' '}
-            <a href="#" className="underline text-slate-500">
+            <a href="#" className="underline text-slate-600">
               Learn more
             </a>
           </p>
@@ -48,10 +48,10 @@ export function MovieUnavailableScreen({
             </div>
           </div>
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold text-black pt-6">Try these instead</h2>
+          <section aria-labelledby="recs-heading" className="mt-8">
+            <h2 id="recs-heading" className="text-2xl font-bold text-black pt-6">Try these instead</h2>
             <p>These films are similar to the one you were looking for.</p>
-          </div>
+          </section>
         </div>
 
         {/* Similar Films — 3 across */}
@@ -66,8 +66,8 @@ export function MovieUnavailableScreen({
               />
               <CardContent className="space-y-2 flex flex-col h-full">
                 <p className="font-bold text-black">{recFilm.title}</p>
-                <p className="text-sm text-slate-600">{recFilm.description}</p>
-                <p className="text-sm text-slate-600 grow">{reason}</p>
+                <p className="text-sm text-slate-700">{recFilm.description}</p>
+                <p className="text-sm text-slate-700 grow">{reason}</p>
                 <div className="flex justify-end gap-2 pt-4">
                   <Button
                     variant="ghost"
@@ -90,10 +90,10 @@ export function MovieUnavailableScreen({
         {/* Footer — right-aligned */}
         <div className="flex justify-end">
           <Button variant="ghost" onClick={onViewAll}>
-            View more films <ArrowRight className="w-4 h-4" />
+            View more films <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -67,11 +67,11 @@ export function SignupGenrePreferences({ onSubmit, onSkip }: SignupGenrePreferen
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-8 py-12">
+    <main className="min-h-screen flex items-center justify-center px-8 py-12">
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-12">
-          <Film className="w-10 h-10 text-black" />
+          <Film className="w-10 h-10 text-black" aria-hidden="true" />
           <h1 className="text-3xl text-black tracking-tight">FilmSlate</h1>
         </div>
 
@@ -79,7 +79,7 @@ export function SignupGenrePreferences({ onSubmit, onSkip }: SignupGenrePreferen
         <h2 className="text-3xl text-black mb-4 text-center">
           What kinds of films do you love?
         </h2>
-        <p className="text-center text-slate-600 mb-12">
+        <p className="text-center text-slate-700 mb-12">
           Select your favourite genres to get personalised recommendations
         </p>
 
@@ -90,6 +90,7 @@ export function SignupGenrePreferences({ onSubmit, onSkip }: SignupGenrePreferen
               <button
                 key={genre.name}
                 onClick={() => toggleGenre(genre.name)}
+                aria-pressed={isSelected}
                 className="relative aspect-[2/3] rounded-lg overflow-hidden group cursor-pointer"
               >
                 <ImageWithFallback
@@ -102,7 +103,7 @@ export function SignupGenrePreferences({ onSubmit, onSkip }: SignupGenrePreferen
                   <span className="text-white z-10">{genre.name}</span>
                   {isSelected && (
                     <div className="absolute top-4 right-4 bg-slate-100 rounded-full p-1">
-                      <Check className="size-5 text-black" />
+                      <Check className="size-5 text-black" aria-hidden="true" />
                     </div>
                   )}
                 </div>
@@ -116,18 +117,18 @@ export function SignupGenrePreferences({ onSubmit, onSkip }: SignupGenrePreferen
           <button
             onClick={handleContinue}
             disabled={selectedGenres.length === 0}
-            className="w-full px-6 py-4 bg-black text-white hover:bg-black/90 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all duration-200 text-lg"
+            className="w-full px-6 py-4 bg-black text-white hover:bg-black/90 disabled:bg-slate-200 disabled:text-slate-600 disabled:cursor-not-allowed transition-all duration-200 text-lg"
           >
             Continue
           </button>
           <button
             onClick={onSkip}
-            className="w-full px-6 py-4 bg-white text-slate-600 hover:text-black transition-all duration-200 text-lg"
+            className="w-full px-6 py-4 bg-white text-slate-700 hover:text-black transition-all duration-200 text-lg"
           >
             Skip this step
           </button>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
