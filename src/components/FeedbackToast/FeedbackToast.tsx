@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { ThumbsUp, ThumbsDown, X } from 'lucide-react';
 import type { Movie } from '@/types';
 import styles from './FeedbackToast.module.css';
@@ -10,11 +11,20 @@ interface FeedbackToastProps {
 }
 
 export function FeedbackToast({ movieDetails, feedbackGiven, onFeedback, onClose }: FeedbackToastProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    containerRef.current?.focus();
+  }, []);
+
   return (
-    <div role="status" aria-live="polite" className={styles.toast}>
-      <button onClick={onClose} aria-label="Close" className={styles.closeButton}>
-        <X className={styles.closeIcon} aria-hidden="true" />
-      </button>
+    <div
+      ref={containerRef}
+      role="alertdialog"
+      aria-label="Feedback"
+      tabIndex={-1}
+      className={styles.toast}
+    >
       {feedbackGiven === null ? (
         <>
           <p className={styles.question}>Did you enjoy {movieDetails.title}?</p>
@@ -34,6 +44,9 @@ export function FeedbackToast({ movieDetails, feedbackGiven, onFeedback, onClose
           <p className={styles.thankYouText}>Thank you for your feedback!</p>
         </div>
       )}
+      <button onClick={onClose} aria-label="Close" className={styles.closeButton}>
+        <X className={styles.closeIcon} aria-hidden="true" />
+      </button>
     </div>
   );
 }
