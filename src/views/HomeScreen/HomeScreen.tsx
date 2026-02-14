@@ -28,7 +28,6 @@ export function HomeScreen({ userData, onMovieSelect, onChooseGenresClick, onCri
   useEffect(() => {
     const getNextHeroIndex = () => {
       const nextHeroIndex = (currentHeroIndex + 1) % (HERO_MOVIES.length);
-      console.log("Hero", { currentHeroIndex, nextHeroIndex, modulo: HERO_MOVIES.length });
       return nextHeroIndex;
     };
     const timer = setInterval(() => {

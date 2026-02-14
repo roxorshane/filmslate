@@ -116,7 +116,7 @@
 }
 
 .forYouCard {
-  @apply flex-shrink-0 w-[240px] cursor-pointer;
+  @apply flex-shrink-0 w-[256px] cursor-pointer;
 }
 
 .cardPoster {
@@ -132,7 +132,7 @@
 }
 
 .cardTitle {
-  @apply text-black transition-colors;
+  @apply text-black transition-colors text-left;
 
   :global(.group):hover & {
     @apply text-slate-600;
