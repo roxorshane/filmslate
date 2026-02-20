@@ -15,8 +15,20 @@
   @apply absolute inset-0 bg-black/50;
 }
 
+.topButtonContainer {
+  @apply absolute z-15 top-4 right-4 flex gap-4;
+}
+
 .loginButton {
-  @apply absolute z-15 top-4 right-4 px-8 py-4 text-white hover:bg-white hover:text-black transition-all duration-200 text-lg cursor-pointer;
+  @apply px-8 py-4 text-white hover:bg-white hover:text-black transition-all duration-200 text-lg cursor-pointer;
+}
+
+.substackButton {
+  @apply px-8 py-4 text-white hover:bg-white hover:text-black transition-all duration-200 text-lg cursor-pointer;
+}
+
+.substackLink {
+  @apply text-white underline cursor-pointer;
 }
 
 .content {

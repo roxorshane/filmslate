@@ -241,7 +241,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white">
       <Routes>
-        <Route path="/" element={<LandingScreen onCreateAccount={handleCreateAccount} />} />
+        <Route path="/" element={<LandingScreen onCreateAccount={handleCreateAccount} onEditorialClick={handleNavigateToCritiques} />} />
         <Route
           path="/signup"
           element={

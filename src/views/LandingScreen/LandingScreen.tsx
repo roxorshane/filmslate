@@ -3,9 +3,10 @@ import styles from './LandingScreen.module.css';
 
 interface LandingScreenProps {
   onCreateAccount: () => void;
+  onEditorialClick: () => void;
 }
 
-export function LandingScreen({ onCreateAccount }: LandingScreenProps) {
+export function LandingScreen({ onCreateAccount, onEditorialClick }: LandingScreenProps) {
   return (
     <main className={styles.main}>
       <div className={styles.backgroundContainer}>
@@ -16,12 +17,20 @@ export function LandingScreen({ onCreateAccount }: LandingScreenProps) {
         />
         <div className={styles.backgroundOverlay} />
       </div>
-      <button
-        onClick={onCreateAccount}
-        className={styles.loginButton}
-      >
-        Log in
-      </button>
+      <div className={styles.topButtonContainer}>
+        <button
+          onClick={onEditorialClick}
+          className={styles.substackButton}
+        >
+          Editorial
+        </button>
+        <button
+          onClick={onCreateAccount}
+          className={styles.loginButton}
+        >
+          Log in
+        </button>
+      </div>
       <div className={styles.content}>
         <div className={styles.logoContainer}>
           <Film className={styles.logoIcon} aria-hidden="true" />
@@ -33,6 +42,9 @@ export function LandingScreen({ onCreateAccount }: LandingScreenProps) {
         <p className={styles.description}>
           Stream bold, independent cinema from visionary filmmakers around the world.
           Experience stories that challenge, inspire, and stay with you long after the credits roll.
+        </p>
+        <p className={styles.description}>
+          Brought to you by the team behind the acclaimed <a onClick={onEditorialClick} className={styles.substackLink}>FilmSlate newsletter</a>, now in a new form. Our streaming service combines expert curation with a passion for cinema, delivering a handpicked selection of indie films that you won't find anywhere else.
         </p>
         <p className={styles.trialInfo}>
           Explore FilmSlate for free with a 7-day trial, then subscribe for £9.99 per month. Cancel anytime.
