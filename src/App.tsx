@@ -60,7 +60,7 @@ function FilmRoute({
   };
 
   const handleNavigateToEditorial = (f: FilmData) => {
-    window.open(`/substack/${f.id}`, '_blank');
+    window.open(`${import.meta.env.BASE_URL}substack/${f.id}`, '_blank');
   };
 
   const handleBackToHome = () => {
