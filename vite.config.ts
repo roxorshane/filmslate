@@ -5,6 +5,7 @@
   import path from 'path';
 
   export default defineConfig({
+    base: process.env.VITE_BASE_PATH ?? '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
