@@ -41,7 +41,7 @@ export function LandingScreen({ onCreateAccount }: LandingScreenProps) {
           onClick={onCreateAccount}
           className={styles.createAccountButton}
         >
-          Create an account
+          Start your free trial
         </button>
       </div>
     </main>
